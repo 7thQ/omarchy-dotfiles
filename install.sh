@@ -22,3 +22,17 @@ link() {
 link "hypr/bindings.lua" "$HOME/.config/hypr/bindings.lua"
 
 # Add more `link "repo/path" "$HOME/.config/path"` lines here as you track more files.
+
+# Reload Hyprland so linked changes take effect immediately, instead of only
+# on the next login. Skipped quietly if Hyprland isn't running (e.g. this
+# script ran before the first login on a fresh setup).
+if command -v hyprctl >/dev/null 2>&1 && hyprctl reload >/dev/null 2>&1; then
+  echo "Reloaded Hyprland config"
+  errors="$(hyprctl configerrors 2>/dev/null || true)"
+  if [[ -n "$errors" ]]; then
+    echo "Hyprland reported config errors:"
+    echo "$errors"
+  fi
+else
+  echo "Hyprland not running - skipped reload (changes apply on next login)"
+fi
